@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
-import 'dart:io';
+import 'package:meu_carrinho/screens/shopList/shopList.dart';
+import './model/product.dart';
 
 void main() {
   runApp(const MyApp());
 }
+
+var sabao = product(name: 'sabao', quantity: 3, gotItem: false);
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -40,7 +43,6 @@ class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
 
   final String title;
-
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -50,12 +52,13 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _incrementCounter() {
     setState(() {
+      sabao.gotItem = true;
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      // _counter++;
+      _counter++;
     });
   }
 
@@ -100,6 +103,35 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
+            ),
+            Column(
+              children: [
+                Card(
+                  child: Row(
+                    children: [
+                      Checkbox(
+                        value: sabao.gotItem,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            sabao.gotItem = value!;
+                          });
+                          print(sabao.gotItem);
+                        },
+                      ),
+                      Column(children: [Text('${sabao.name}')]),
+                      Column(children: [Text(' | ')]),
+                      GestureDetector(
+                        onTap: () {
+                          MaterialPageRoute(
+                            builder: (context) => const Shoplist(),
+                          );
+                        },
+                        // child: Text('${sabao.gotItem}'),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ],
         ),
