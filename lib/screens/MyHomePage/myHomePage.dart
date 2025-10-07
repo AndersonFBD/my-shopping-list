@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:meu_carrinho/model/product.dart';
 import 'package:meu_carrinho/screens/shopList/shopList.dart';
 
-var sabao = product(name: 'sabão', quantity: 3, gotItem: false);
+var sabao = Product(name: 'sabão', quantity: 3, unit: 'pacote', gotItem: false);
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});

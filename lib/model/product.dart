@@ -1,7 +1,37 @@
-class product {
+import 'package:uuid/uuid.dart';
+
+class Product {
+  final String id;
   String name;
   int quantity;
+  String unit;
   bool gotItem;
 
-  product({required this.name, required this.quantity, required this.gotItem});
+  Product({
+    String? id,
+    required this.name,
+    required this.quantity,
+    required this.unit,
+    this.gotItem = false,
+  }) : id = id ?? const Uuid().v4();
+
+  Map<String, dynamic> toJson() => {
+    'id': id,
+    'name': name,
+    'quantity': quantity,
+    "unity": unit,
+    "gotItem": gotItem,
+  };
+
+  factory Product.fromJson(Map<String, dynamic> json) {
+    return Product(
+      id: json['id'] as String?,
+      name: json['name'] as String? ?? '',
+      quantity: (json['quantity'] is num)
+          ? (json['quantity'] as num).toInt()
+          : int.tryParse('${json['quantity']}') ?? 0,
+      unit: json['unit'] as String? ?? '',
+      gotItem: json['gotItem'] as bool? ?? false,
+    );
+  }
 }
