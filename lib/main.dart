@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:meu_carrinho/screens/MyHomePage/myHomePage.dart';
 import 'package:flutter/services.dart';
 
-void main() {
+import 'package:meu_carrinho/screens/MyHomePage/myHomePage.dart';
+import 'package:meu_carrinho/database/hive_config.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await HiveConfig.start();
+
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((
     _,
   ) {
