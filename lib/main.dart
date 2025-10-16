@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
+import 'package:hive/hive.dart';
+import 'package:meu_carrinho/adapters/lista_compras_hive_adapter.dart';
+import 'package:meu_carrinho/model/product.dart';
 import 'package:meu_carrinho/screens/MyHomePage/myHomePage.dart';
-import 'package:meu_carrinho/database/hive_config.dart';
+import 'package:meu_carrinho/configs/hive_config.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await HiveConfig.start();
 
-  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]).then((
-    _,
-  ) {
-    runApp(const MyApp());
-  });
+  Hive.registerAdapter(ListaComprasHiveAdapter());
+  Hive.registerAdapter(ProductAdapter());
+
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {

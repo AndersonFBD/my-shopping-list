@@ -1,10 +1,23 @@
 import 'package:uuid/uuid.dart';
+import 'package:hive/hive.dart';
 
+part 'product.g.dart';
+
+@HiveType(typeId: 1)
 class Product {
+  @HiveField(0)
   final String id;
+
+  @HiveField(1)
   String name;
+
+  @HiveField(2)
   int quantity;
+
+  @HiveField(3)
   String unit;
+
+  @HiveField(4)
   bool gotItem;
 
   Product({
@@ -19,7 +32,7 @@ class Product {
     'id': id,
     'name': name,
     'quantity': quantity,
-    "unity": unit,
+    "unit": unit,
     "gotItem": gotItem,
   };
 
