@@ -1,10 +1,21 @@
 import 'product.dart';
 import 'package:uuid/uuid.dart';
+import 'package:hive/hive.dart';
 
-class ShoppingList {
+part 'shopping_list.g.dart';
+
+@HiveType(typeId: 0)
+class ShoppingList extends HiveObject {
+  @HiveField(0)
   final String id;
+
+  @HiveField(1)
   String name;
+
+  @HiveField(2)
   DateTime createdAt;
+
+  @HiveField(3)
   List<Product> items = [];
 
   ShoppingList({

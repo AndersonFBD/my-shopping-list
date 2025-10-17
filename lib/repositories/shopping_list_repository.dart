@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:meu_carrinho/configs/app_config.dart';
 import 'package:meu_carrinho/model/shopping_list.dart';
 
 class ShoppingListRepository extends ChangeNotifier {
@@ -18,7 +19,7 @@ class ShoppingListRepository extends ChangeNotifier {
   }
 
   _openBox() async {
-    box = await Hive.openLazyBox<ShoppingList>('listas_de_compras');
+    box = await Hive.openLazyBox<ShoppingList>(AppConfig().listaComprasBox);
   }
 
   _readListas() {
