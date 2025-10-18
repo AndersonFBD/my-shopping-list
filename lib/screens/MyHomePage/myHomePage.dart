@@ -51,7 +51,21 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: AppConfig().navBarColor,
       ),
       body: _listas.isEmpty
-          ? const Center(child: Text('Nenhuma lista criada'))
+          ? const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [Icon(Icons.shopping_cart_outlined, size: 64.0)],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [Text('Nenhuma lista criada')],
+                  ),
+                ],
+              ),
+            )
           : ListView.builder(
               itemCount: _listas.length,
               itemBuilder: (context, index) {
@@ -73,11 +87,12 @@ class _MyHomePageState extends State<MyHomePage> {
               },
             ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: AppConfig().addButtonColor,
         onPressed: () {
           print('botão de adicionar nova lista pressionado');
         },
         tooltip: 'Increment',
-        child: const Icon(Icons.add),
+        child: Icon(Icons.add, color: AppConfig().navBarText, size: 40.0),
       ),
     );
   }
