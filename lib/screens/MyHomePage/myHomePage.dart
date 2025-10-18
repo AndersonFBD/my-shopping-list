@@ -69,6 +69,13 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               },
             ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          print('botão de adicionar nova lista pressionado');
+        },
+        tooltip: 'Increment',
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
