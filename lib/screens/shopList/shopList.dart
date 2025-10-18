@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-// import 'package:meu_carrinho/model/product.dart';
 import 'package:hive/hive.dart';
 import 'package:meu_carrinho/configs/app_config.dart';
 import 'package:meu_carrinho/model/shopping_list.dart';
-
-// var cafe = Product(name: 'café', quantity: 500, unit: 'gramas');
 
 class Shoplist extends StatefulWidget {
   final String listId;
@@ -61,7 +58,7 @@ class _ShoplistState extends State<Shoplist> {
         },
         tooltip: 'Increment',
         child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }
