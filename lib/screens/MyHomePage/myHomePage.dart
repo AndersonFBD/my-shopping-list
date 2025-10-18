@@ -44,8 +44,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Minhas Listas'),
-        backgroundColor: Color(0xFF0099FF),
+        title: Text(
+          'Minhas Listas',
+          style: TextStyle(color: AppConfig().navBarText),
+        ),
+        backgroundColor: AppConfig().navBarColor,
       ),
       body: _listas.isEmpty
           ? const Center(child: Text('Nenhuma lista criada'))
