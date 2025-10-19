@@ -4,7 +4,7 @@ import 'package:meu_carrinho/configs/app_config.dart';
 // import 'package:meu_carrinho/model/product.dart';
 import 'package:meu_carrinho/model/shopping_list.dart';
 import 'package:meu_carrinho/screens/shopList/shopList.dart';
-//import 'package:meu_carrinho/storage/file_storage.dart';
+import '../../widgets/add_list_dialog.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -12,6 +12,18 @@ class MyHomePage extends StatefulWidget {
   final String title;
   @override
   State<MyHomePage> createState() => _MyHomePageState();
+}
+
+void _showAddDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (_) => AddListDialog(
+      onAdd: (name) {
+        print('texto do Dialog: $name');
+      },
+    ),
+  );
 }
 
 class _MyHomePageState extends State<MyHomePage> {
@@ -51,13 +63,19 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: AppConfig().navBarColor,
       ),
       body: _listas.isEmpty
-          ? const Center(
+          ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: [Icon(Icons.shopping_cart_outlined, size: 64.0)],
+                    children: [
+                      Icon(
+                        Icons.shopping_cart_outlined,
+                        size: 48.0,
+                        color: AppConfig().iconColor,
+                      ),
+                    ],
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -89,9 +107,10 @@ class _MyHomePageState extends State<MyHomePage> {
       floatingActionButton: FloatingActionButton(
         backgroundColor: AppConfig().addButtonColor,
         onPressed: () {
-          print('botão de adicionar nova lista pressionado');
+          // Modal para adicionar uma nova lista de compras
+          _showAddDialog(context);
         },
-        tooltip: 'Increment',
+        tooltip: 'Nova lista de compras',
         child: Icon(Icons.add, color: AppConfig().navBarText, size: 40.0),
       ),
     );
