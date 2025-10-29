@@ -9,41 +9,24 @@ class Product {
   final String id;
 
   @HiveField(1)
-  String name;
+  String description;
 
   @HiveField(2)
-  int quantity;
-
-  @HiveField(3)
-  String unit;
-
-  @HiveField(4)
   bool gotItem;
 
-  Product({
-    String? id,
-    required this.name,
-    required this.quantity,
-    required this.unit,
-    this.gotItem = false,
-  }) : id = id ?? const Uuid().v4();
+  Product({String? id, required this.description, this.gotItem = false})
+    : id = id ?? const Uuid().v4();
 
   Map<String, dynamic> toJson() => {
     'id': id,
-    'name': name,
-    'quantity': quantity,
-    "unit": unit,
+    'description': description,
     "gotItem": gotItem,
   };
 
   factory Product.fromJson(Map<String, dynamic> json) {
     return Product(
       id: json['id'] as String?,
-      name: json['name'] as String? ?? '',
-      quantity: (json['quantity'] is num)
-          ? (json['quantity'] as num).toInt()
-          : int.tryParse('${json['quantity']}') ?? 0,
-      unit: json['unit'] as String? ?? '',
+      description: json['description'] as String? ?? '',
       gotItem: json['gotItem'] as bool? ?? false,
     );
   }

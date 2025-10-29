@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
 import 'package:meu_carrinho/configs/app_config.dart';
-// import 'package:meu_carrinho/model/product.dart';
 import 'package:meu_carrinho/model/shopping_list.dart';
 import 'package:meu_carrinho/screens/shopList/shopList.dart';
 import '../../widgets/add_list_dialog.dart';
@@ -20,7 +21,17 @@ void _showAddDialog(BuildContext context) {
     barrierDismissible: true,
     builder: (_) => AddListDialog(
       onAdd: (name) {
-        print('texto do Dialog: $name');
+        if (name.isNotEmpty) {
+          print('texto do Dialog: $name');
+          Fluttertoast.showToast(
+            msg: 'lista adicionada!',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.black.withValues(alpha: 0.7),
+            textColor: Colors.white,
+            fontSize: 16.0,
+          );
+        }
       },
     ),
   );

@@ -45,9 +45,7 @@ class _ShoplistState extends State<Shoplist> {
                   });
                 },
               ),
-              title: Text(
-                "${product.name} (${product.quantity} ${product.unit})",
-              ),
+              title: Text("${product.description})"),
             ),
           );
         },
