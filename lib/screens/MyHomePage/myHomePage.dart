@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 
@@ -8,6 +7,7 @@ import 'package:meu_carrinho/model/shopping_list.dart';
 import 'package:meu_carrinho/repositories/shopping_list_repository.dart';
 import 'package:meu_carrinho/screens/shopList/shopList.dart';
 import '../../widgets/add_list_dialog.dart';
+import '../../widgets/edit_list_dialog.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -90,9 +90,61 @@ class _MyHomePageState extends State<MyHomePage> {
               itemBuilder: (context, index) {
                 final lista = listas[index];
                 return ListTile(
-                  title: Text('id:${lista.id} | ${lista.name}'),
+                  title: Text(lista.name),
                   subtitle: Text(
                     'Criada em ${lista.createdAt.day}/${lista.createdAt.month}/${lista.createdAt.year}',
+                  ),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (_) => EditListDialog(
+                              initialName: lista.name,
+                              onSave: (newName) async {
+                                final repo = context
+                                    .read<ShoppingListRepository>();
+                                lista.name = newName;
+                                await repo.updateList(lista);
+                              },
+                            ),
+                          );
+                        },
+                        icon: Icon(Icons.edit),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (ctx) => AlertDialog(
+                              title: const Text('Remover lista?'),
+                              content: Text("deseja remover ${lista.name}?"),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(ctx).pop(),
+                                  child: const Text('CANCELAR'),
+                                ),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                  ),
+                                  onPressed: () async {
+                                    final repo = context
+                                        .read<ShoppingListRepository>();
+                                    await repo.removeList(lista.id);
+                                    Navigator.of(ctx).pop();
+                                  },
+                                  child: Text('DELETAR'),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        icon: Icon(Icons.delete),
+                      ),
+                    ],
                   ),
                   onTap: () {
                     Navigator.push(

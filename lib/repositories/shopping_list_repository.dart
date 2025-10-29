@@ -66,8 +66,8 @@ class ShoppingListRepository extends ChangeNotifier {
   // ================ CRUD de produtos ================ //
 
   // acrescentar um produto à lista
-  Future<void> addProduct(String ListId, Product product) async {
-    final list = _listas.firstWhere((l) => l.id == ListId);
+  Future<void> addProduct(String listId, Product product) async {
+    final list = _listas.firstWhere((l) => l.id == listId);
     list.items.add(product);
     await updateList(list);
   }
