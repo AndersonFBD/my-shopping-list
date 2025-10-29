@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 
 import 'package:meu_carrinho/configs/app_config.dart';
 import 'package:meu_carrinho/model/shopping_list.dart';
+import 'package:meu_carrinho/repositories/shopping_list_repository.dart';
 import 'package:meu_carrinho/screens/shopList/shopList.dart';
 import '../../widgets/add_list_dialog.dart';
 
@@ -15,16 +17,24 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-void _showAddDialog(BuildContext context) {
+void _showAddDialog(BuildContext outerContext) {
   showDialog(
-    context: context,
+    context: outerContext,
     barrierDismissible: true,
     builder: (_) => AddListDialog(
-      onAdd: (name) {
+      onAdd: (name) async {
         if (name.isNotEmpty) {
-          print('texto do Dialog: $name');
+          final repo = outerContext.read<ShoppingListRepository>();
+          final newList = ShoppingList(
+            name: name,
+            createdAt: DateTime.now(),
+            items: [],
+          );
+
+          await repo.addList(newList);
+
           Fluttertoast.showToast(
-            msg: 'lista adicionada!',
+            msg: '${newList.name} adicionada!',
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
             backgroundColor: Colors.black.withValues(alpha: 0.7),
@@ -38,32 +48,12 @@ void _showAddDialog(BuildContext context) {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  bool _loading = true;
-  List<ShoppingList> _listas = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _initializeHive();
-  }
-
-  Future<void> _initializeHive() async {
-    var myListBox = await Hive.openBox<ShoppingList>(
-      AppConfig().listaComprasBox,
-    );
-    final listas = myListBox.values.toList();
-
-    setState(() {
-      _listas = listas;
-      _loading = false;
-    });
-  }
+  List<ShoppingList> listas = [];
 
   @override
   Widget build(BuildContext context) {
-    if (_loading) {
-      return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    }
+    final repo = context.watch<ShoppingListRepository>();
+    final listas = repo.listas;
 
     return Scaffold(
       appBar: AppBar(
@@ -73,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         backgroundColor: AppConfig().navBarColor,
       ),
-      body: _listas.isEmpty
+      body: listas.isEmpty
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -96,9 +86,9 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
             )
           : ListView.builder(
-              itemCount: _listas.length,
+              itemCount: listas.length,
               itemBuilder: (context, index) {
-                final lista = _listas[index];
+                final lista = listas[index];
                 return ListTile(
                   title: Text('id:${lista.id} | ${lista.name}'),
                   subtitle: Text(

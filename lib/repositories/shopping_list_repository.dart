@@ -11,12 +11,16 @@ class ShoppingListRepository extends ChangeNotifier {
   late LazyBox<ShoppingList> box;
 
   ShoppingListRepository() {
+    print('ShoppingListRepository: constructor');
     _startRepository();
   }
 
   _startRepository() async {
+    print('ShoppingListRepository: start repository...');
     await _openBox();
+    print('ShoppingListRepository: box opened -> ${box.name}');
     await _readListas();
+    print('ShoppingListRepository: read listas -> ${_listas.length}');
   }
 
   _openBox() async {
@@ -34,8 +38,10 @@ class ShoppingListRepository extends ChangeNotifier {
   }
 
   Future<void> addList(ShoppingList newList) async {
+    print('addList called; box open? ${box.isOpen}');
     await box.put(newList.id, newList);
     _listas.add(newList);
+    print('addList after put -> listas length: ${_listas.length}');
     notifyListeners();
   }
 
