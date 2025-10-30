@@ -25,7 +25,10 @@ class _ShoplistState extends State<Shoplist> {
 
     await repo.addProduct(list.id, Product(description: name));
     _productController.clear();
-    _focusNode.requestFocus();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _focusNode.requestFocus();
+    });
   }
 
   @override
@@ -78,7 +81,7 @@ class _ShoplistState extends State<Shoplist> {
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
+            bottom: MediaQuery.of(context).viewInsets.bottom + 8,
             left: 8,
             right: 8,
             top: 6,
@@ -100,7 +103,7 @@ class _ShoplistState extends State<Shoplist> {
                       vertical: 12,
                     ),
                   ),
-                  onSubmitted: (_) => _addProduct(context),
+                  onEditingComplete: () => _addProduct(context),
                 ),
               ),
               const SizedBox(width: 8),
