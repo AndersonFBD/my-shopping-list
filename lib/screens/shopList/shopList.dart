@@ -14,6 +14,19 @@ class Shoplist extends StatefulWidget {
 
 class _ShoplistState extends State<Shoplist> {
   final TextEditingController _productController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
+
+  Future<void> _addProduct(BuildContext context) async {
+    final name = _productController.text.trim();
+    if (name.isEmpty) return;
+
+    final repo = context.read<ShoppingListRepository>();
+    final list = repo.listas.firstWhere((lc) => lc.id == widget.listId);
+
+    await repo.addProduct(list.id, Product(description: name));
+    _productController.clear();
+    _focusNode.requestFocus();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -62,60 +75,46 @@ class _ShoplistState extends State<Shoplist> {
                 );
               },
             ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: AppConfig().addButtonColor,
-        onPressed: () {
-          _showAddProductDialog(context, repo, list.id);
-        },
-        tooltip: 'Adicionar produto',
-        child: Icon(Icons.add, color: AppConfig().navBarText),
-      ),
-    );
-  }
-
-  void _showAddProductDialog(
-    BuildContext context,
-    ShoppingListRepository repo,
-    String listId,
-  ) {
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: const Text('O que quer comprar?'),
-        content: TextField(
-          controller: _productController,
-          decoration: const InputDecoration(
-            labelText: 'Descrição',
-            border: OutlineInputBorder(),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            left: 8,
+            right: 8,
+            top: 6,
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _productController,
+                  focusNode: _focusNode,
+                  textInputAction: TextInputAction.send,
+                  decoration: InputDecoration(
+                    hintText: 'Adicionar produto',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                  ),
+                  onSubmitted: (_) => _addProduct(context),
+                ),
+              ),
+              const SizedBox(width: 8),
+              CircleAvatar(
+                backgroundColor: AppConfig().addButtonColor,
+                child: IconButton(
+                  onPressed: () => _addProduct(context),
+                  icon: Icon(Icons.add, color: Colors.white),
+                  tooltip: 'Adicionar',
+                ),
+              ),
+            ],
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              _productController.clear();
-            },
-            child: const Text('Cancelar'),
-          ),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppConfig().addButtonColor,
-            ),
-            onPressed: () async {
-              final desc = _productController.text.trim();
-              if (desc.isNotEmpty) {
-                final newProduct = Product(description: desc, gotItem: false);
-                await repo.addProduct(listId, newProduct);
-              }
-              Navigator.pop(context);
-              _productController.clear();
-            },
-            child: Text(
-              'Adicionar',
-              style: TextStyle(color: AppConfig().navBarText),
-            ),
-          ),
-        ],
       ),
     );
   }
