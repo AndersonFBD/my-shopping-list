@@ -44,10 +44,26 @@ class _ShoplistState extends State<Shoplist> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: AppConfig().navBarColor,
+        foregroundColor: Colors.white,
         title: Text(list.name),
+        actions: <Widget>[
+          IconButton(onPressed: () => print('share'), icon: Icon(Icons.share)),
+        ],
       ),
       body: products.isEmpty
-          ? const Center(child: Text('Sua Lista está vazia'))
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.shopping_basket_rounded,
+                    size: 100.0,
+                    color: AppConfig().navBarText,
+                  ),
+                  Text('Sua Lista está vazia'),
+                ],
+              ),
+            )
           : ListView.builder(
               itemCount: products.length,
               itemBuilder: (context, index) {
