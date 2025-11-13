@@ -1,10 +1,13 @@
 import 'dart:collection';
+import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 import 'package:meu_carrinho/configs/app_config.dart';
 import 'package:meu_carrinho/model/product.dart';
 import 'package:meu_carrinho/model/shopping_list.dart';
+import 'package:path_provider/path_provider.dart';
 
 class ShoppingListRepository extends ChangeNotifier {
   List<ShoppingList> _listas = [];
@@ -61,6 +64,17 @@ class ShoppingListRepository extends ChangeNotifier {
     _listas.removeWhere((compra) => compra.id == id);
     await box.delete(id);
     notifyListeners();
+  }
+
+  // Métodos de exportação/importação
+
+  Future<String> exportList(ShoppingList myList) async {
+    final importDir = Directory('/storage/emulated/0/Documents');
+
+    final listFile = File('${importDir.path}/${myList.name}.json');
+    var jsonList = jsonEncode(myList.toJson());
+    await listFile.writeAsString(jsonList);
+    return listFile.path;
   }
 
   // ================ CRUD de produtos ================ //

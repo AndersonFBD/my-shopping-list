@@ -47,7 +47,18 @@ class _ShoplistState extends State<Shoplist> {
         foregroundColor: Colors.white,
         title: Text(list.name),
         actions: <Widget>[
-          IconButton(onPressed: () => print('share'), icon: Icon(Icons.share)),
+          IconButton(
+            onPressed: () async {
+              final repo = context.read<ShoppingListRepository>();
+              final list = repo.listas.firstWhere((l) => l.id == widget.listId);
+              final path = await repo.exportList(list);
+
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Lista exportada em: \n$path')),
+              );
+            },
+            icon: Icon(Icons.upload_file),
+          ),
         ],
       ),
       body: products.isEmpty
