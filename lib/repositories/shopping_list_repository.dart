@@ -69,12 +69,24 @@ class ShoppingListRepository extends ChangeNotifier {
   // Métodos de exportação/importação
 
   Future<String> exportList(ShoppingList myList) async {
-    final importDir = Directory('/storage/emulated/0/Documents');
+    final exportDir = Directory(AppConfig().exportDir);
 
-    final listFile = File('${importDir.path}/${myList.name}.json');
+    final listFile = File('${exportDir.path}/${myList.name}.json');
     var jsonList = jsonEncode(myList.toJson());
     await listFile.writeAsString(jsonList);
     return listFile.path;
+  }
+
+  Future<String> importList(String fileAddress) async {
+    final importedFile = File(fileAddress);
+    if (importedFile.path.contains('.json')) {
+      ShoppingList newList = jsonDecode(importedFile.toString());
+      addList(newList);
+
+      return "Lista ${newList.name} adicionada.";
+    } else {
+      return "arquivo inválido";
+    }
   }
 
   // ================ CRUD de produtos ================ //
