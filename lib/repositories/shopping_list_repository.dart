@@ -77,6 +77,16 @@ class ShoppingListRepository extends ChangeNotifier {
     return listFile.path;
   }
 
+  //precisa do endereço do arquivo
+  //pega o arquivo a partir do endereço;
+  //verificar se é um JSON
+  //se for um JSON:
+  //converte ele para objeto ao decodificá-lo.
+  // chama o método de adicionar lista com os dados decodificados
+  // retorna mensagem de confirmação
+  // se não for válido
+  //retorna aviso de arquivo inválido
+
   Future<String> importList(String fileAddress) async {
     final importedFile = File(fileAddress);
     if (importedFile.path.contains('.json')) {
