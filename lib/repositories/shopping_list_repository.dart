@@ -8,6 +8,7 @@ import 'package:meu_carrinho/configs/app_config.dart';
 import 'package:meu_carrinho/model/product.dart';
 import 'package:meu_carrinho/model/shopping_list.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:uuid/uuid.dart';
 
 class ShoppingListRepository extends ChangeNotifier {
   List<ShoppingList> _listas = [];
@@ -71,7 +72,7 @@ class ShoppingListRepository extends ChangeNotifier {
   Future<String> exportList(ShoppingList myList) async {
     final exportDir = Directory(AppConfig().exportDir);
 
-    final listFile = File('${exportDir.path}/${myList.name}.json');
+    final listFile = File('${exportDir.path}/${myList.name}.mlc');
     var jsonList = jsonEncode(myList.toJson());
     await listFile.writeAsString(jsonList);
     return listFile.path;
@@ -79,23 +80,44 @@ class ShoppingListRepository extends ChangeNotifier {
 
   //precisa do endereço do arquivo
   //pega o arquivo a partir do endereço;
-  //verificar se é um JSON
-  //se for um JSON:
+  //verificar se é um mlc
+  //se for um MLC:
   //converte ele para objeto ao decodificá-lo.
-  // chama o método de adicionar lista com os dados decodificados
+  // se a lista já existir, atualizar a lista com o conteúdo importado;
+  // senão, chama o método de adicionar lista com os dados decodificados
   // retorna mensagem de confirmação
   // se não for válido
   //retorna aviso de arquivo inválido
 
   Future<String> importList(String fileAddress) async {
-    final importedFile = File(fileAddress);
-    if (importedFile.path.contains('.json')) {
-      ShoppingList newList = jsonDecode(importedFile.toString());
-      addList(newList);
+    try {
+      final importedFile = File(fileAddress);
 
-      return "Lista ${newList.name} adicionada.";
-    } else {
-      return "arquivo inválido";
+      if (!await importedFile.exists()) {
+        return "Arquivo não encontrado";
+      }
+
+      if (!importedFile.path.toLowerCase().endsWith('.mlc')) {
+        return "arquivo inválido";
+      }
+
+      final content = await importedFile.readAsString();
+
+      final decodedJSON = jsonDecode(content);
+
+      ShoppingList newList = ShoppingList.fromJson(decodedJSON);
+
+      final existsSameID = listas.any((lista) => lista.id == newList.id);
+
+      if (existsSameID) {
+        updateList(newList);
+        return 'Lista ${newList.name} atualizada';
+      }
+
+      addList(newList);
+      return "Lista ${newList.name} adicionada";
+    } catch (e) {
+      return "erro ao importar a lista: $e";
     }
   }
 
