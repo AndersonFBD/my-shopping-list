@@ -1,16 +1,17 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:meu_carrinho/configs/app_config.dart';
 import 'package:meu_carrinho/repositories/shopping_list_repository.dart';
 import 'package:provider/provider.dart';
 
 class ImportListDialog extends StatefulWidget {
   @override
-  _ImportListDialogState createState() => _ImportListDialogState();
+  ImportListDialogState createState() => ImportListDialogState();
 }
 
-class _ImportListDialogState extends State<ImportListDialog> {
-  String? SelectedFile;
+class ImportListDialogState extends State<ImportListDialog> {
+  String? selectedFile;
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +37,7 @@ class _ImportListDialogState extends State<ImportListDialog> {
                 );
                 if (result != null && result.files.isNotEmpty) {
                   setState(() {
-                    SelectedFile = result.files.single.path!;
+                    selectedFile = result.files.single.path!;
                   });
                 }
               },
@@ -45,10 +46,10 @@ class _ImportListDialogState extends State<ImportListDialog> {
             ),
             const SizedBox(height: 12),
             Text(
-              SelectedFile ?? "Nenhum arquivo selecionado",
+              selectedFile ?? "Nenhum arquivo selecionado",
               style: TextStyle(
                 fontSize: 14,
-                color: SelectedFile == null ? Colors.grey : Colors.black,
+                color: selectedFile == null ? Colors.grey : Colors.black,
               ),
             ),
             const SizedBox(height: 24),
@@ -66,16 +67,21 @@ class _ImportListDialogState extends State<ImportListDialog> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppConfig().addButtonColor,
                   ),
-                  onPressed: SelectedFile == null
+                  onPressed: selectedFile == null
                       ? null
                       : () async {
                           final repo = context.read<ShoppingListRepository>();
-                          final msg = await repo.importList(SelectedFile!);
+                          final msg = await repo.importList(selectedFile!);
 
-                          ScaffoldMessenger.of(
-                            context,
-                          ).showSnackBar(SnackBar(content: Text(msg)));
-
+                          Fluttertoast.showToast(
+                            msg: msg,
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.BOTTOM,
+                            backgroundColor: Colors.black.withOpacity(0.7),
+                            textColor: Colors.white,
+                            fontSize: 16.0,
+                          );
+                          await Future.delayed(Duration(milliseconds: 80));
                           Navigator.of(context).pop();
                         },
                   child: Text(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:meu_carrinho/widgets/import_list_dialog.dart';
 import 'package:provider/provider.dart';
 
 import 'package:meu_carrinho/configs/app_config.dart';
@@ -62,6 +63,14 @@ class _MyHomePageState extends State<MyHomePage> {
           style: TextStyle(color: AppConfig().navBarText),
         ),
         backgroundColor: AppConfig().navBarColor,
+        actions: [
+          IconButton(
+            onPressed: () {
+              showDialog(context: context, builder: (_) => ImportListDialog());
+            },
+            icon: Icon(Icons.file_open),
+          ),
+        ],
       ),
       body: listas.isEmpty
           ? Center(
