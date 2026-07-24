@@ -7,24 +7,23 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 
+import 'package:meu_carrinho/configs/hive_config.dart';
 import 'package:meu_carrinho/main.dart';
+import 'package:meu_carrinho/repositories/shopping_list_repository.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('app builds smoke test', (WidgetTester tester) async {
+    await HiveConfig.start();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    await tester.pumpWidget(
+      ChangeNotifierProvider(
+        create: (_) => ShoppingListRepository(),
+        child: MyApp(navigatorKey: GlobalKey<NavigatorState>()),
+      ),
+    );
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.text('Minhas listas de compras'), findsOneWidget);
   });
 }
