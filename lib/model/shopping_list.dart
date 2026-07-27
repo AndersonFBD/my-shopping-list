@@ -1,28 +1,39 @@
 import 'product.dart';
 import 'package:uuid/uuid.dart';
+import 'package:hive/hive.dart';
 
-class ShoppingList {
+part 'shopping_list.g.dart';
+
+@HiveType(typeId: 0)
+class ShoppingList extends HiveObject {
+  @HiveField(0)
   final String id;
+
+  @HiveField(1)
   String name;
+
+  @HiveField(2)
   DateTime createdAt;
+
+  @HiveField(3)
   List<Product> items = [];
-  double? totalCost;
 
   ShoppingList({
     String? id,
     required this.name,
     required this.createdAt,
-    List<Product>? items,
-    this.totalCost,
+    required List<Product> items,
   }) : id = id ?? const Uuid().v4(),
-       items = items ?? [];
+       items = items;
 
   Map<String, dynamic> toJson() => {
     'id': id,
     'name': name,
-    'createdAt': createdAt.toIso8601String(),
+    'createdAt':
+        '${createdAt.year.toString().padLeft(4, '0')}-'
+        '${createdAt.month.toString().padLeft(2, '0')}-'
+        '${createdAt.day.toString().padLeft(2, '0')}',
     'items': items.map((p) => p.toJson()).toList(),
-    'totalCost': totalCost,
   };
 
   factory ShoppingList.fromJson(Map<String, dynamic> json) {
@@ -38,9 +49,6 @@ class ShoppingList {
                 .map((e) => Product.fromJson(e as Map<String, dynamic>))
                 .toList()
           : [],
-      totalCost: (json['totalCost'] is num)
-          ? (json['totalCost'] as num).toDouble()
-          : null,
     );
   }
 }
