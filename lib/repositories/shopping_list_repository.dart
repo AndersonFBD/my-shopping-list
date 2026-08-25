@@ -7,19 +7,24 @@ import 'package:hive/hive.dart';
 import 'package:meu_carrinho/configs/app_config.dart';
 import 'package:meu_carrinho/model/product.dart';
 import 'package:meu_carrinho/model/shopping_list.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:uuid/uuid.dart';
 
 class ShoppingListRepository extends ChangeNotifier {
   List<ShoppingList> _listas = [];
   late LazyBox<ShoppingList> box;
+  late final Future<void> _initialization;
 
   ShoppingListRepository() {
     print('ShoppingListRepository: constructor');
-    _startRepository();
+    _initialization = _startRepository();
   }
 
-  _startRepository() async {
+  Future<void> get initialized => _initialization;
+
+  Future<void> _ensureInitialized() async {
+    await _initialization;
+  }
+
+  Future<void> _startRepository() async {
     print('ShoppingListRepository: start repository...');
     await _openBox();
     print('ShoppingListRepository: box opened -> ${box.name}');
@@ -42,9 +47,11 @@ class ShoppingListRepository extends ChangeNotifier {
   }
 
   Future<void> addList(ShoppingList newList) async {
+    await _ensureInitialized();
     print('addList called; box open? ${box.isOpen}');
     await box.put(newList.id, newList);
     _listas.add(newList);
+    _listas.sort((a, b) => b.createdAt.compareTo(a.createdAt));
     print('addList after put -> listas length: ${_listas.length}');
     notifyListeners();
   }
@@ -53,15 +60,18 @@ class ShoppingListRepository extends ChangeNotifier {
       UnmodifiableListView(_listas);
 
   Future<void> updateList(ShoppingList updatedList) async {
+    await _ensureInitialized();
     final index = _listas.indexWhere((l) => l.id == updatedList.id);
     if (index != -1) {
       _listas[index] = updatedList;
+      _listas.sort((a, b) => b.createdAt.compareTo(a.createdAt));
       await box.put(updatedList.id, updatedList);
       notifyListeners();
     }
   }
 
   Future<void> removeList(String id) async {
+    await _ensureInitialized();
     _listas.removeWhere((compra) => compra.id == id);
     await box.delete(id);
     notifyListeners();
@@ -70,6 +80,7 @@ class ShoppingListRepository extends ChangeNotifier {
   // Métodos de exportação/importação
 
   Future<String> exportList(ShoppingList myList) async {
+    await _ensureInitialized();
     final exportDir = Directory(AppConfig().exportDir);
 
     final listFile = File('${exportDir.path}/${myList.name}.mlc');
@@ -110,11 +121,11 @@ class ShoppingListRepository extends ChangeNotifier {
       final existsSameID = listas.any((lista) => lista.id == newList.id);
 
       if (existsSameID) {
-        updateList(newList);
+        await updateList(newList);
         return 'Lista ${newList.name} atualizada';
       }
 
-      addList(newList);
+      await addList(newList);
       return "Lista ${newList.name} adicionada";
     } catch (e) {
       return "erro ao importar a lista: $e";
