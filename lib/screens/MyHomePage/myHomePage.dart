@@ -124,6 +124,22 @@ class _MyHomePageState extends State<MyHomePage> {
                         icon: Icon(Icons.edit),
                       ),
                       IconButton(
+                        onPressed: () async {
+                          final repo = context.read<ShoppingListRepository>();
+                          try {
+                            await repo.shareList(lista);
+                          } catch (e) {
+                            if (!context.mounted) return;
+                            Fluttertoast.showToast(
+                              msg: 'Erro ao compartilhar: $e',
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                            );
+                          }
+                        },
+                        icon: Icon(Icons.share),
+                      ),
+                      IconButton(
                         onPressed: () {
                           showDialog(
                             context: context,
