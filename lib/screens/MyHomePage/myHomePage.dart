@@ -9,6 +9,7 @@ import 'package:meu_carrinho/repositories/shopping_list_repository.dart';
 import 'package:meu_carrinho/screens/shopList/shopList.dart';
 import '../../widgets/add_list_dialog.dart';
 import '../../widgets/edit_list_dialog.dart';
+import '../../widgets/info.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -64,6 +65,12 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         backgroundColor: AppConfig().navBarColor,
         actions: [
+          IconButton(
+            onPressed: () {
+              showDialog(context: context, builder: (_) => InfoDialog());
+            },
+            icon: Icon(Icons.info_outline),
+          ),
           IconButton(
             onPressed: () {
               showDialog(context: context, builder: (_) => ImportListDialog());
@@ -122,6 +129,22 @@ class _MyHomePageState extends State<MyHomePage> {
                           );
                         },
                         icon: Icon(Icons.edit),
+                      ),
+                      IconButton(
+                        onPressed: () async {
+                          final repo = context.read<ShoppingListRepository>();
+                          try {
+                            await repo.shareList(lista);
+                          } catch (e) {
+                            if (!context.mounted) return;
+                            Fluttertoast.showToast(
+                              msg: 'Erro ao compartilhar: $e',
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.BOTTOM,
+                            );
+                          }
+                        },
+                        icon: Icon(Icons.share),
                       ),
                       IconButton(
                         onPressed: () {

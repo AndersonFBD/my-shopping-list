@@ -50,14 +50,34 @@ class _ShoplistState extends State<Shoplist> {
           IconButton(
             onPressed: () async {
               final repo = context.read<ShoppingListRepository>();
-              final list = repo.listas.firstWhere((l) => l.id == widget.listId);
-              final path = await repo.exportList(list);
-
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Lista exportada em: \n$path')),
-              );
+              try {
+                await repo.shareList(list);
+              } catch (e) {
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Erro ao compartilhar: $e')),
+                );
+              }
             },
-            icon: Icon(Icons.upload_file),
+            icon: Icon(Icons.share),
+          ),
+          IconButton(
+            onPressed: () async {
+              final repo = context.read<ShoppingListRepository>();
+              try {
+                final path = await repo.exportList(list);
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Lista exportada em: \n$path')),
+                );
+              } catch (e) {
+                if (!context.mounted) return;
+                ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text('Erro ao exportar: $e')));
+              }
+            },
+            icon: Icon(Icons.upload),
           ),
         ],
       ),

@@ -7,6 +7,7 @@ import 'package:hive/hive.dart';
 import 'package:meu_carrinho/configs/app_config.dart';
 import 'package:meu_carrinho/model/product.dart';
 import 'package:meu_carrinho/model/shopping_list.dart';
+import 'package:share_plus/share_plus.dart';
 
 class ShoppingListRepository extends ChangeNotifier {
   List<ShoppingList> _listas = [];
@@ -82,11 +83,22 @@ class ShoppingListRepository extends ChangeNotifier {
   Future<String> exportList(ShoppingList myList) async {
     await _ensureInitialized();
     final exportDir = Directory(AppConfig().exportDir);
+    await exportDir.create(recursive: true);
 
     final listFile = File('${exportDir.path}/${myList.name}.mlc');
-    var jsonList = jsonEncode(myList.toJson());
+    final jsonList = jsonEncode(myList.toJson());
     await listFile.writeAsString(jsonList);
     return listFile.path;
+  }
+
+  Future<ShareResult> shareList(ShoppingList myList) async {
+    final path = await exportList(myList);
+    return SharePlus.instance.share(
+      ShareParams(
+        files: [XFile(path, mimeType: 'application/vnd.meu-carrinho.mlc')],
+        text: 'Lista de compras: ${myList.name}',
+      ),
+    );
   }
 
   //precisa do endereço do arquivo

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 class AppConfig {
+  final String appVersion = '1.0.0';
+  final String developerName = 'AndersonFBD';
+  final String contato = "andersonf.barrosdias@gmail.com";
   final String listaComprasBox = 'lista_compras_collection';
   final String exportDir = '/storage/emulated/0/Documents';
   final navBarColor = Colors.green.shade600;
